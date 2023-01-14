@@ -2,11 +2,13 @@
 
 :root {
   --main-text-color: #212121;
+  --bg-black-750: hsl(210, 8%, 20%);
   --secondary-text-color: #0d0dc2;
   --main-element-color: #04aa6d;
   --main-element-focus-color: #059862;
   --second-element-focus-color: #7e7e7e;
   --cancellation-color: #db3939;
+  --cancellation-light-color: #ea5252;
   --even-row-color: #f2f2f2;
   --label-color: #757575;
   --interactive-color: #ddd;
@@ -16,6 +18,7 @@ body {
   letter-spacing: 0.03em;
   color: var(--main-text-color);
   overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 p {
@@ -55,21 +58,37 @@ a {
   padding-right: 15px;
 }
 
+/* -------------------- BASE -------------------- */
+
+.icon {
+  fill: currentColor;
+}
+
 /* -------------------- TOP LINE -------------------- */
 
 .top-line {
-  padding: 5px 0;
+  padding: 10px 0;
   color: white;
-  background-color: var(--label-color);
+  background-color: var(--bg-black-750);
 }
 
-.top-line__items {
+.info-wrapper {
   display: flex;
-  gap: 20px;
+  gap: 10px;
+}
 
-  font-size: 16px;
-  line-height: 1.88;
-  letter-spacing: 0.03em;
+.info {
+  display: flex;
+  gap: 10px;
+}
+
+.info::after {
+  content: "";
+  border-right: 1px solid white;
+}
+
+.info-value {
+  color: var(--cancellation-light-color);
 }
 
 .task-monitoring {
@@ -88,21 +107,18 @@ a {
   gap: 10px;
 }
 
+.filter__item {
+  position: relative;
+  border-radius: 5px;
+}
+
 .filter__label {
   display: flex;
   flex-direction: column;
-
   font-size: 14px;
   line-height: 1.16;
-
   letter-spacing: 0.01em;
-
   color: var(--label-color);
-}
-
-.filter__select-wrapper {
-  position: relative;
-  border-radius: 5px;
 }
 
 .filter__select {
@@ -111,18 +127,14 @@ a {
   appearance: none;
   outline: none;
   cursor: pointer;
-
+  height: 40px;
   padding: 10px 38px 10px 18px;
-
   font-size: 18px;
   font-weight: 500;
   color: white;
-
   background-color: var(--main-element-color);
-
   border: none;
   border-radius: 5px;
-
   transition: background-color 250ms, background-color 250ms;
 }
 
@@ -144,34 +156,139 @@ a {
 
 .filter__icon {
   position: absolute;
-  top: 50%;
-  right: 5px;
-  transform: translate(-50%, -50%);
-
-  fill: white;
-
+  top: 0;
+  right: 8px;
+  transform: translate(0, 100%);
   pointer-events: none;
+  fill: white;
+}
+
+.filter__item:hover .filter__icon {
+  transform: rotate(10%);
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 70px;
+  height: 40px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  border-radius: 5px;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 32px;
+  width: 33px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  border-radius: 5px;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked+.slider {
+  background-color: var(--main-element-color);
+}
+
+input:focus+.slider {
+  box-shadow: 0 0 1px var(--main-element-color);
+}
+
+input:checked+.slider:before {
+  -webkit-transform: translateX(29px);
+  -ms-transform: translateX(29px);
+  transform: translateX(29px);
+}
+
+/* -------------------- TABLE NAVIGATION -------------------- */
+
+.table-navigation__items {
+  display: flex;
+  justify-content: space-between;
+  color: white;
+  background-color: var(--main-element-color);
+  border-radius: 5px;
+}
+
+.table-navigation__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+  color: white;
+  background-color: transparent;
+  border-radius: 5px;
+}
+
+.table-navigation__button:active {
+  background-color: var(--main-element-focus-color);
+}
+
+.table-navigation__span {
+  min-width: 30px;
+  height: 40px;
+  text-align: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 500;
+  color: inherit;
 }
 
 /* -------------------- TABLE -------------------- */
 
 .table {
   width: 100%;
-  margin-top: 20px;
+  max-height: 70vh;
+  width: 100%;
+  display: block;
+  margin: 20px auto;
+  overflow-y: scroll;
+  overflow-x: auto;
+  border-spacing: 0;
   border-collapse: collapse;
-  table-layout: fixed;
-
 }
 
-.table__cell {
-  padding: 8px;
-  transition: background-color 250ms;
-}
-
-.table__data {
+.table__body {
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+}
+
+.table__header {
+  padding: 12px 8px;
+  text-align: left;
+  color: white;
+  white-space: nowrap;
+  background-color: var(--main-element-color);
+}
+
+.table__header:nth-child(n+2) {
+  width: calc(77vw / 6);
+}
+
+.table__head {
+  position: sticky;
+  top: -1px;
 }
 
 .table__header,
@@ -179,22 +296,43 @@ a {
   border: 1px solid #ddd;
 }
 
-.table__header {
-  max-width: 100px;
-  padding: 12px 8px;
-  text-align: left;
+.table__cell {
+  transition: background-color 250ms;
+}
+
+.table__data {
+  padding: 8px;
+  /* white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; */
+}
+
+.table__cell:first-child,
+.table__header:first-child {
+  width: 3vw;
+  text-align: center;
+  background-color: var(--cancellation-color);
+}
+
+.table__cell:first-child {
+  background-color: var(--cancellation-light-color);
+  color: white;
+}
+
+.table__header:first-child {
+  background-color: var(--cancellation-color);
+}
+
+.table__cell--interactive:hover {
+  cursor: pointer;
   background-color: var(--main-element-color);
   color: white;
 }
 
-.table__header-equalizer {
+.table__equalizer {
   display: flex;
-  justify-content: space-between;
+  gap: 10px;
   align-items: center;
-}
-
-.table__row {
-  transition: background-color 250ms;
 }
 
 .table__row:nth-child(2n + 2) {
@@ -203,26 +341,6 @@ a {
 
 .table__row:hover {
   background-color: var(--interactive-color);
-}
-
-.table__row:nth-child(n)>.table__cell:first-child:hover,
-.table__row:nth-child(n)>.table__cell:last-child:hover,
-.table__row:nth-child(n)>.table__cell:first-child:focus,
-.table__row:nth-child(n)>.table__cell:last-child:focus {
-  cursor: pointer;
-  background-color: var(--main-element-color);
-  color: white;
-}
-
-.table__icon {
-  fill: currentColor;
-}
-
-/* -------------------- FOOTER -------------------- */
-
-.footer {
-  height: 80px;
-  background-color: var(--label-color);
 }
 
 /* -------------------- MODAL -------------------- */
@@ -345,19 +463,11 @@ a {
   .table__cell {
     padding: 4px;
     font-size: 12px;
-    overflow: auto;
   }
 
   .table__header {
     padding: 8px;
     text-align: left;
-    overflow: auto;
-  }
-
-  .table__header-equalizer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
   }
 
   .table__icon {

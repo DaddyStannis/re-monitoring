@@ -9,26 +9,17 @@ MODAL_CLOSE_BTN.addEventListener("click", () => {
 });
 
 BACKDROP.addEventListener("click", (e) => {
-  if (e.target === BACKDROP) {
+  if (e.target === e.currentTarget) {
     modalClose();
   }
 });
-
-function modalOpen() {
-  MODAL_DATA.scrollIntoView(true);
-  BACKDROP.classList.add("js-modal-visible");
-}
 
 function modalClose() {
   BACKDROP.classList.remove("js-modal-visible");
 }
 
-function modalDataOpen(index) {
-  MODAL_DATA.innerHTML = tableData[index].originalJson;
-  modalOpen();
-}
-
-function modalReasonOpen(index) {
-  MODAL_DATA.innerHTML = tableData[index].failureReason;
-  modalOpen();
+function modalOpen(data) {
+  MODAL_DATA.innerHTML = data;
+  MODAL_DATA.scrollIntoView(true);
+  BACKDROP.classList.add("js-modal-visible");
 }

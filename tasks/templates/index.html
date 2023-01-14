@@ -14,82 +14,154 @@
     <main class="main">
       <section class="top-line">
         <div class="container">
-          <ul class="top-line__items">
-            <li class="top-line__item">
-              <p class="top-line__info">
-                Processed:
-                <span class="top-line__value js-processed-counter"> 0 </span>
-              </p>
-            </li>
-            <li class="top-line__item">
-              <p class="top-line__info">
-                Failed:
-                <span class="top-line__value js-failed-counter"> 0 </span>
-              </p>
-            </li>
-          </ul>
+          <div class="info-wrapper">
+            <p class="info">
+              <strong>General statistics: </strong>
+              Total:
+              <span class="info-value js-general-total-counter">0</span>
+              Processed:
+              <span class="info-value js-general-processed-counter">0</span>
+              Failed:
+              <span class="info-value js-general-failed-counter">0</span>
+            </p>
+            <p class="info">
+              <strong>Statistics by filter: </strong>
+              Processed:
+              <span class="info-value js-processed-counter">0</span>
+              Failed:
+              <span class="info-value js-failed-counter">0</span>
+            </p>
+          </div>
         </div>
       </section>
 
       <section class="task-monitoring">
         <div class="container">
-          <form class="filter">
+          <form class="filter js-filter">
             <ul class="filter__items">
               <li class="filter__item">
                 <label class="filter__label">
+                  <span class="filter__span">Only failed</span>
+                </label>
+                <label class="switch">
+                  <span class="filter__span"></span>
+                  <input class="js-only-failed-checkbox" type="checkbox" />
+                  <span class="slider"></span>
+                </label>
+              </li>
+              <li class="filter__item">
+                <label class="filter__label" for="datetime-sort-select-1">
                   <span class="filter__span">Sorted by</span>
-                  <div class="filter__select-wrapper">
-                    <select class="filter__select js-datetime-sort-select">
-                      <option class="filter__select-option" value="1">
-                        Newer first
-                      </option>
-                      <option class="filter__select-option" value="0">
-                        Older first
-                      </option>
-                    </select>
-                    <svg class="filter__icon" width="15" height="15">
-                      <use href="./img/icons.svg#icon-down-arrow"></use>
-                    </svg>
-                  </div>
                 </label>
+                <select
+                  class="filter__select js-datetime-sort-select"
+                  id="datetime-sort-select-1"
+                >
+                  <option class="filter__select-option" value="1">
+                    Newer first
+                  </option>
+                  <option class="filter__select-option" value="0">
+                    Older first
+                  </option>
+                </select>
+                <svg class="filter__icon" width="25" height="25">
+                  <use
+                    href="./img/icons.svg#icon-keyboard_arrow_down_black"
+                  ></use>
+                </svg>
               </li>
               <li class="filter__item">
-                <label class="filter__label">
+                <label class="filter__label" for="type-select-1">
                   <span class="filter__span">Type</span>
-                  <div class="filter__select-wrapper">
-                    <select
-                      class="filter__select js-type-select"
-                      name="show-tasks-by-type"
-                      id="select-show-tasks-by-type"
-                    >
-                      <option value="1">All tasks</option>
-                    </select>
-                    <svg class="filter__icon" width="15" height="15">
-                      <use href="./img/icons.svg#icon-down-arrow"></use>
-                    </svg>
-                  </div>
                 </label>
+                <select
+                  class="filter__select js-type-select"
+                  name="show-tasks-by-type"
+                  id="type-select-1"
+                >
+                  <option value="alltypes">All types</option>
+                </select>
+                <svg class="filter__icon" width="25" height="25">
+                  <use
+                    href="./img/icons.svg#icon-keyboard_arrow_down_black"
+                  ></use>
+                </svg>
+              </li>
+              <li class="filter__item">
+                <label class="filter__label" for="period-select-1">
+                  <span class="filter__span">Period</span>
+                </label>
+                <select
+                  class="filter__select js-period-select"
+                  name="show-tasks-for-period"
+                  id="period-select-1"
+                >
+                  <option value="alltime">All time</option>
+                  <option value="86400">1 days</option>
+                  <option value="259200">3 days</option>
+                  <option value="604800">7 days</option>
+                  <option value="2592000">30 days</option>
+                </select>
+                <svg class="filter__icon" width="25" height="25">
+                  <use
+                    href="./img/icons.svg#icon-keyboard_arrow_down_black"
+                  ></use>
+                </svg>
               </li>
               <li class="filter__item">
                 <label class="filter__label">
-                  <span class="filter__span">Period</span>
-                  <div class="filter__select-wrapper">
-                    <select
-                      class="filter__select js-period-select"
-                      name="show-tasks-for-period"
-                      id="select-show-tasks-for-period"
-                    >
-                      <option value="Infinity">All time</option>
-                      <option value="1">1 days</option>
-                      <option value="3">3 days</option>
-                      <option value="7">7 days</option>
-                      <option value="30">30 days</option>
-                    </select>
-                    <svg class="filter__icon" width="15" height="15">
-                      <use href="./img/icons.svg#icon-down-arrow"></use>
-                    </svg>
-                  </div>
+                  <span class="filter__span">Navigation</span>
                 </label>
+                <div class="table-navigation__items">
+                  <button
+                    class="table-navigation__button js-first-page-btn"
+                    type="button"
+                  >
+                    <svg class="icon" width="25" height="25">
+                      <use href="./img/icons.svg#icon-first_page_black"></use>
+                    </svg>
+                  </button>
+                  <button
+                    class="table-navigation__button js-previous-page-btn"
+                    type="button"
+                  >
+                    <svg class="icon" width="25" height="25">
+                      <use
+                        href="./img/icons.svg#icon-keyboard_arrow_left"
+                      ></use>
+                    </svg>
+                  </button>
+                  <span
+                    class="table-navigation__span table-navigation__span--left js-page-number"
+                    >0</span
+                  >
+                  <span
+                    class="table-navigation__span table-navigation__span--middle"
+                    >of</span
+                  >
+                  <span
+                    class="table-navigation__span table-navigation__span--right js-pages"
+                    >0</span
+                  >
+                  <button
+                    class="table-navigation__button js-next-page-btn"
+                    type="button"
+                  >
+                    <svg class="icon" width="25" height="25">
+                      <use
+                        href="./img/icons.svg#icon-keyboard_arrow_right"
+                      ></use>
+                    </svg>
+                  </button>
+                  <button
+                    class="table-navigation__button js-last-page-btn"
+                    type="button"
+                  >
+                    <svg class="icon" width="25" height="25">
+                      <use href="./img/icons.svg#icon-last_page_black"></use>
+                    </svg>
+                  </button>
+                </div>
               </li>
             </ul>
           </form>
@@ -98,11 +170,14 @@
             <thead class="table__head">
               <tr class="table__row">
                 <th class="table__header">
-                  <div class="table__header-equalizer">
-                    <span>Task id</span>
-                    <svg class="table__icon" width="20" height="20">
+                  <span>#</span>
+                </th>
+                <th class="table__header">
+                  <div class="table__equalizer">
+                    <svg class="icon" width="20" height="20">
                       <use href="./img/icons.svg#icon-embed2"></use>
                     </svg>
+                    <span>Task id</span>
                   </div>
                 </th>
                 <th class="table__header">
@@ -118,11 +193,11 @@
                   <span>Status</span>
                 </th>
                 <th class="table__header">
-                  <div class="table__header-equalizer">
-                    <span>Reason</span>
-                    <svg class="table__icon" width="20" height="20">
+                  <div class="table__equalizer">
+                    <svg class="icon" width="20" height="20">
                       <use href="./img/icons.svg#icon-embed2"></use>
                     </svg>
+                    <span>Reason</span>
                   </div>
                 </th>
               </tr>
@@ -146,9 +221,9 @@
       </div>
     </div>
 
-    <footer class="footer"><div class="container"></div></footer>
-
     <script src="./js/main.js"></script>
     <script src="./js/modal.js"></script>
+    <script src="./js/utils.js"></script>
+    <script src="./js/server-api.js"></script>
   </body>
 </html>

@@ -9,5 +9,7 @@ urlpatterns = [
   path('css/styles.css', views.getStyles),
   path('js/modal.js', views.getJSModal),
   path('js/main.js', views.getJSMain),
+  path('js/server-api.js', views.getJSServerApi),
+  path('js/utils.js', views.getJSUtils),
   path('tasks/', views.getTasks),
 ]

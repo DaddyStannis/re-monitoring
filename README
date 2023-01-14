@@ -1,0 +1,4 @@
+"You have to replace the path to the directory"
+REQUEST_DIR = Path('C:\\Users\\Stani\\Projects\\work\\Request')
+
+pip install watchdog

@@ -1,6 +1,19 @@
 import os
+import re
+import json
 
 
+def getJsonInHtmlFormat(data):
+    data = json.dumps(json.loads(data), indent=4)
+    return transformTextInHtmlFormat(data)
+
+
+def transformTextInHtmlFormat(text):
+    text = re.sub(r'\n', r'<br>', text)
+    text = re.sub(r' ', r'&nbsp', text)
+    return text
+    
+    
 class FileSystem:
 
     @staticmethod
@@ -34,24 +47,25 @@ class FileSystem:
 class Path:
 
     @staticmethod
-    def appendDirToPath(path, dirName):
-        path = str(path)
-        if path[-1] != '/':
-            path += '/'
-        if dirName[-1] != '/':
-            dirName += '/'
-        return path + dirName
-
-    @staticmethod
-    def appendDirsToPath(path, dirNames):
+    def appendListToPath(path, dirNames):
         for dn in dirNames:
-            path = Path.appendDirToPath(path, dn)
+            path = Path.appendToPath(path, dn)
         return path
     
     @staticmethod
-    def appendFileToPath(path, fileName):
-        return str(path) + fileName
+    def appendToPath(path, fileName):
+        return os.path.join(path, fileName)
 
     @staticmethod
     def getPathWithoutBasename(path):
-        return os.path.dirname(path) + '/'
+        return os.path.dirname(path)
+    
+    @staticmethod
+    def removePrefix(path, prefix):
+        return os.path.relpath(path, prefix)
+    
+    @staticmethod
+    def getParts(path):
+        path = os.path.normpath(path)
+        return path.split(os.sep)
+        

@@ -18,5 +18,43 @@
 <path d="M14 9l-3-3-10 10 10 10 3-3-7-7z"></path>
 <path d="M21.916 4.704l2.171 0.592-6 22.001-2.171-0.592 6-22.001z"></path>
 </symbol>
+<symbol id="icon-arrow-right" viewBox="0 0 32 32">
+<path d="M31 16l-15-15v9h-16v12h16v9z"></path>
+</symbol>
+<symbol id="icon-arrow-left" viewBox="0 0 32 32">
+<path d="M1 16l15 15v-9h16v-12h-16v-9z"></path>
+</symbol>
+<symbol id="icon-arrow-right2" viewBox="0 0 32 32">
+<path d="M19.414 27.414l10-10c0.781-0.781 0.781-2.047 0-2.828l-10-10c-0.781-0.781-2.047-0.781-2.828 0s-0.781 2.047 0 2.828l6.586 6.586h-19.172c-1.105 0-2 0.895-2 2s0.895 2 2 2h19.172l-6.586 6.586c-0.39 0.39-0.586 0.902-0.586 1.414s0.195 1.024 0.586 1.414c0.781 0.781 2.047 0.781 2.828 0z"></path>
+</symbol>
+<symbol id="icon-arrow-left2" viewBox="0 0 32 32">
+<path d="M12.586 27.414l-10-10c-0.781-0.781-0.781-2.047 0-2.828l10-10c0.781-0.781 2.047-0.781 2.828 0s0.781 2.047 0 2.828l-6.586 6.586h19.172c1.105 0 2 0.895 2 2s-0.895 2-2 2h-19.172l6.586 6.586c0.39 0.39 0.586 0.902 0.586 1.414s-0.195 1.024-0.586 1.414c-0.781 0.781-2.047 0.781-2.828 0z"></path>
+</symbol>
+<symbol id="icon-keyboard_arrow_left" viewBox="0 0 32 32">
+<path d="M20.547 22.12l-6.107-6.12 6.107-6.12-1.88-1.88-8 8 8 8 1.88-1.88z"></path>
+</symbol>
+<symbol id="icon-keyboard_arrow_right" viewBox="0 0 32 32">
+<path d="M11.453 22.12l6.107-6.12-6.107-6.12 1.88-1.88 8 8-8 8-1.88-1.88z"></path>
+</symbol>
+<symbol id="icon-keyboard_double_arrow_right" viewBox="0 0 32 32">
+<path d="M8.547 8l-1.88 1.88 6.107 6.12-6.107 6.12 1.88 1.88 8-8z"></path>
+<path d="M17.333 8l-1.88 1.88 6.107 6.12-6.107 6.12 1.88 1.88 8-8z"></path>
+</symbol>
+<symbol id="icon-keyboard_double_arrow_left" viewBox="0 0 32 32">
+<path d="M23.453 24l1.88-1.88-6.107-6.12 6.107-6.12-1.88-1.88-8 8z"></path>
+<path d="M14.667 24l1.88-1.88-6.107-6.12 6.107-6.12-1.88-1.88-8 8z"></path>
+</symbol>
+<symbol id="icon-keyboard_arrow_down_black" viewBox="0 0 32 32">
+<path d="M9.88 11.453l6.12 6.107 6.12-6.107 1.88 1.88-8 8-8-8 1.88-1.88z"></path>
+</symbol>
+<symbol id="icon-keyboard_arrow_up_black" viewBox="0 0 32 32">
+<path d="M9.88 20.547l6.12-6.107 6.12 6.107 1.88-1.88-8-8-8 8z"></path>
+</symbol>
+<symbol id="icon-first_page_black" viewBox="0 0 32 32">
+<path d="M24.547 22.12l-6.12-6.12 6.12-6.12-1.88-1.88-8 8 8 8zM8 8h2.667v16h-2.667z"></path>
+</symbol>
+<symbol id="icon-last_page_black" viewBox="0 0 32 32">
+<path d="M7.453 9.88l6.12 6.12-6.12 6.12 1.88 1.88 8-8-8-8zM21.333 8h2.667v16h-2.667z"></path>
+</symbol>
 </defs>
 </svg>

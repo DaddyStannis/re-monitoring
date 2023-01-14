@@ -1,133 +1,86 @@
-const SERVER_URL = "tasks/";
 const TABLE_BODY = document.querySelector(".js-table-body");
+const FILTER = document.querySelector(".js-filter");
+const GENERAL_PROCESSED_COUNTER = document.querySelector(
+  ".js-general-processed-counter"
+);
+const GENERAL_FAILED_COUNTER = document.querySelector(
+  ".js-general-failed-counter"
+);
+const GENERAL_TOTAL_COUNTER = document.querySelector(
+  ".js-general-total-counter"
+);
 const PROCESSED_COUNTER = document.querySelector(".js-processed-counter");
 const FAILED_COUNTER = document.querySelector(".js-failed-counter");
 const PERIOD_SELECT = document.querySelector(".js-period-select");
 const DATETIME_SORT_SELECT = document.querySelector(".js-datetime-sort-select");
 const TYPE_SELECT = document.querySelector(".js-type-select");
-const TASKS = [];
+const FIRST_PAGE_BTN = document.querySelector(".js-first-page-btn");
+const PREVIOUS_PAGE_BTN = document.querySelector(".js-previous-page-btn");
+const NEXT_PAGE_BTN = document.querySelector(".js-next-page-btn");
+const LAST_PAGE_BTN = document.querySelector(".js-last-page-btn");
+const PAGE_NUMBER = document.querySelector(".js-page-number");
+const ONLY_FAILED_CHECKBOX = document.querySelector(".js-only-failed-checkbox");
+const TABLE_DISPLAY_LIMIT = 50;
 
 let tableDataCells = null;
 let tableReasonCells = null;
 let tableData = [];
 let types = [];
+let fieldIndex = 0;
 
 document.addEventListener("DOMContentLoaded", () => {
-  const request = new XMLHttpRequest();
-  request.open("GET", SERVER_URL);
-  request.responseType = "text";
-
-  request.onload = function () {
-    JSON.parse(request.response).forEach((val) => TASKS.push(val));
-    updateTable();
-
-    types = TASKS.map((task) => task.type).filter(
-      (type, index, array) => array.indexOf(type) === index
-    );
-
-    for (const type of types) {
-      let option = document.createElement("option");
-      option.value = type;
-      option.innerHTML = type;
-      TYPE_SELECT.appendChild(option);
-    }
-  };
-
-  request.send();
+  getFirstPage();
 });
 
-PERIOD_SELECT.addEventListener("input", (event) => {
-  updateTable();
+TABLE_BODY.addEventListener("click", (event) => {
+  if (event.target.classList.contains("js-data-cell")) {
+    modalOpen(tableData[Number(event.target.dataset["id"])].originalJson);
+  } else if (event.target.classList.contains("js-reason-cell")) {
+    modalOpen(tableData[Number(event.target.dataset["id"])].failureReason);
+  }
 });
 
-TYPE_SELECT.addEventListener("input", (event) => {
-  updateTable();
+FILTER.addEventListener("input", (event) => {
+  if (event.target.nodeName === "SELECT" || event.target.nodeName === "INPUT") {
+    requestTasks();
+  }
 });
 
-DATETIME_SORT_SELECT.addEventListener("input", (event) => {
-  updateTable();
-});
+NEXT_PAGE_BTN.addEventListener("click", getNextPage);
 
-function updateTable() {
-  deleteAllFields();
-
-  tableData = [...TASKS];
-  tableData = filterByType(tableData, TYPE_SELECT.value);
-  tableData = filterByPeriod(tableData, PERIOD_SELECT.value);
-  sortByDate(tableData, DATETIME_SORT_SELECT.value);
-  countAndDisplayTaskStatusCounters(tableData);
-
-  writeAllFields(tableData);
-
-  tableDataCells = document.querySelectorAll(".js-data-cell");
-  tableReasonCells = document.querySelectorAll(".js-reason-cell");
-
-  const addEventListenerToClickableCells = (cellList, callback) => {
-    for (let i = 0; i < cellList.length; ++i) {
-      cellList[i].addEventListener("click", () => {
-        callback(i);
-      });
-    }
-  };
-
-  addEventListenerToClickableCells(tableDataCells, modalDataOpen);
-  addEventListenerToClickableCells(tableReasonCells, modalReasonOpen);
+function updateData() {
+  updateFields(tableData);
+  updateTypes(types);
 }
 
-/************************************ DATETIME ************************************/
-
-const DAYS = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-];
-
-function addLeadingZero(num) {
-  return num < 10 ? "0" + num : num;
-}
-
-function formatDatetime(timestamp) {
-  const datetime = new Date(Number(timestamp) * 1000);
-  const Y = datetime.getFullYear();
-  const M = addLeadingZero(datetime.getMonth() + 1);
-  const D = addLeadingZero(datetime.getDate());
-  const d = DAYS[datetime.getDay()];
-  const h = addLeadingZero(datetime.getHours());
-  const m = addLeadingZero(datetime.getMinutes());
-  const s = addLeadingZero(datetime.getSeconds());
-  return `${D}.${M}.${Y} ${h}:${m}:${s} (${d})`;
-}
-
-function countAndDisplayTaskStatusCounters(tasks) {
-  let processed = 0;
-  let failed = 0;
-
-  for (const task of tasks) {
-    if (task.status === "Processed") {
-      processed++;
-    } else {
-      failed++;
+function updateTypes(types) {
+  for (const type of types) {
+    if (![...TYPE_SELECT.options].find((elem) => elem.value === type)) {
+      const html = `
+        <option value="${type}">${type}</option>
+      `;
+      TYPE_SELECT.insertAdjacentHTML("beforeend", html);
     }
   }
-  PROCESSED_COUNTER.innerHTML = processed;
-  FAILED_COUNTER.innerHTML = failed;
 }
 
-/************************************ TABLE ROWS ************************************/
-
-function writeAllFields(taskList) {
-  const getHtmlField = (task) => {
+function updateFields(tasks) {
+  const getHtmlField = (task, index) => {
+    let failureReason =
+      task.status === "Failed" ? task.failureReason.slice(0, 30) : "";
+    if (failureReason.length === 30) {
+      failureReason += "...";
+    }
     return `
     <tr class="table__row js-table-row">
-      <td class="table__cell js-data-cell">
-        <p class="table__data">${task.id}</p>
+      <td class="table__cell">
+        <p class="table__data">${index + 1}</p>
+      </td>
+      <td class="table__cell table__cell--interactive">
+        <p class="table__data js-data-cell" data-id="${index}">${task.id}</p>
       </td>
       <td class="table__cell">
-        <time>${formatDatetime(task.timestamp)}</time>
+        <time class="table__data">${formatDatetime(task.timestamp)}</time>
       </td>
       <td class="table__cell">
         <p class="table__data">${task.type}</p>
@@ -138,52 +91,47 @@ function writeAllFields(taskList) {
       <td class="table__cell">
         <p class="table__data">${task.status}</p>
       </td>
-      <td class="table__cell js-reason-cell">
-        <p class="table__data">${task.failureReason}</p>
+      <td class="table__cell table__cell--interactive">
+        <p class="table__data table__long-cell js-reason-cell" data-id="${index}">${failureReason}</p>
       </td>
     </tr>
   `;
   };
 
-  for (const task of taskList) {
-    TABLE_BODY.insertAdjacentHTML("beforeend", getHtmlField(task));
+  TABLE_BODY.innerHTML = "";
+
+  for (const i in tasks) {
+    TABLE_BODY.insertAdjacentHTML(
+      "beforeend",
+      getHtmlField(tasks[i], Number(i))
+    );
   }
 }
 
-function deleteAllFields() {
-  const allRows = document.querySelectorAll(".js-table-row");
-  allRows.forEach((row) => row.remove());
+function getFirstPage() {
+  fieldIndex = 0;
+  PAGE_NUMBER.textContent = 1;
+  requestTasks();
 }
 
-/************************************ FILTER ************************************/
-
-function convertDaysToMilliseconds(days) {
-  return days * 24 * 60 * 60 * 1000;
-}
-
-function filterByPeriod(tasks, period = Infinity) {
-  const periodInMilliseconds = convertDaysToMilliseconds(period);
-  const timestamp = Math.round(Date.now() - periodInMilliseconds);
-  const filtered = tasks.filter((task) => {
-    if (Number(task.timestamp) * 1000 >= timestamp) return task;
-  });
-  return filtered;
-}
-
-function filterByType(tasks, type) {
-  if (!types.includes(type)) {
-    return tasks;
+function getPreviousPage() {
+  if (fieldIndex < TABLE_DISPLAY_LIMIT) {
+    return;
   } else {
-    return tasks.filter((task) => (task.type === type ? task : undefined));
+    fieldIndex -= TABLE_DISPLAY_LIMIT;
+    PAGE_NUMBER.textContent = Number(PAGE_NUMBER.textContent) - 1;
+    requestTasks();
   }
 }
 
-/************************************ SORTER ************************************/
-
-function sortByDate(tasks, newerFirst) {
-  return tasks.sort((a, b) => {
-    atime = Number(a.timestamp);
-    btime = Number(b.timestamp);
-    return Number(newerFirst) ? btime - atime : atime - btime;
-  });
+function getNextPage() {
+  if (TABLE_BODY.childElementCount < TABLE_DISPLAY_LIMIT) {
+    return;
+  } else {
+    fieldIndex += TABLE_DISPLAY_LIMIT;
+    PAGE_NUMBER.textContent = Number(PAGE_NUMBER.textContent) + 1;
+    requestTasks();
+  }
 }
+
+function getLastPage() {}
