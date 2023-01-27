@@ -21,7 +21,7 @@ class FSEventHandler(FileSystemEventHandler):
         if event.is_directory:
             pass
         else:
-            self.task_file.removeTask(event.src_path.strip())
+            self.taskScanner.removeTask(event.src_path.strip())
       
 
 def startObserver(taskScanner, path):

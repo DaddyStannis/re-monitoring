@@ -1,80 +1,121 @@
-const TABLE_BODY = document.querySelector(".js-table-body");
-const FILTER = document.querySelector(".js-filter");
-const GENERAL_PROCESSED_COUNTER = document.querySelector(
-  ".js-general-processed-counter"
-);
-const GENERAL_FAILED_COUNTER = document.querySelector(
-  ".js-general-failed-counter"
-);
-const GENERAL_TOTAL_COUNTER = document.querySelector(
-  ".js-general-total-counter"
-);
-const PROCESSED_COUNTER = document.querySelector(".js-processed-counter");
-const FAILED_COUNTER = document.querySelector(".js-failed-counter");
-const PERIOD_SELECT = document.querySelector(".js-period-select");
-const DATETIME_SORT_SELECT = document.querySelector(".js-datetime-sort-select");
-const TYPE_SELECT = document.querySelector(".js-type-select");
-const FIRST_PAGE_BTN = document.querySelector(".js-first-page-btn");
-const PREVIOUS_PAGE_BTN = document.querySelector(".js-previous-page-btn");
-const NEXT_PAGE_BTN = document.querySelector(".js-next-page-btn");
-const LAST_PAGE_BTN = document.querySelector(".js-last-page-btn");
-const PAGE_NUMBER = document.querySelector(".js-page-number");
-const ONLY_FAILED_CHECKBOX = document.querySelector(".js-only-failed-checkbox");
-const TABLE_DISPLAY_LIMIT = 50;
+import { _requestTasks } from "./server-api";
+import { formatDatetime } from "./utils";
 
-let tableDataCells = null;
-let tableReasonCells = null;
-let tableData = [];
-let types = [];
-let fieldIndex = 0;
+const refs = {
+  tableBody: document.querySelector(".js-table-body"),
+  filter: document.querySelector(".js-filter"),
+  generalProcessedCounter: document.querySelector(
+    ".js-general-processed-counter"
+  ),
+  generalFailedCounter: document.querySelector(".js-general-failed-counter"),
+  generalTotalCounter: document.querySelector(".js-general-total-counter"),
+  processedCounter: document.querySelector(".js-processed-counter"),
+  failedCounter: document.querySelector(".js-failed-counter"),
+  period: document.querySelector(".js-period"),
+  sortOrder: document.querySelector(".js-sort-order"),
+  currentType: document.querySelector(".js-type"),
+  firstPage: document.querySelector(".js-first-page"),
+  previousPage: document.querySelector(".js-previous-page"),
+  nextPage: document.querySelector(".js-next-page"),
+  lastPage: document.querySelector(".js-last-page"),
+  pageNumber: document.querySelector(".js-page-number"),
+  numberOfPages: document.querySelector(".js-number-of-pages"),
+  statusFlag: document.querySelector(".js-status-flag"),
+};
+const DISPLAY_LIMIT = 50;
+const DATA = [];
+let pageNumber = 0;
+let totalPages = 0;
 
 document.addEventListener("DOMContentLoaded", () => {
-  getFirstPage();
+  extractSettings();
+  requestTasks(pageNumber);
 });
 
-TABLE_BODY.addEventListener("click", (event) => {
+refs.tableBody.addEventListener("click", (event) => {
   if (event.target.classList.contains("js-data-cell")) {
-    modalOpen(tableData[Number(event.target.dataset["id"])].originalJson);
+    modalOpen(DATA[Number(event.target.dataset["id"])].originalJson);
   } else if (event.target.classList.contains("js-reason-cell")) {
-    modalOpen(tableData[Number(event.target.dataset["id"])].failureReason);
+    modalOpen(DATA[Number(event.target.dataset["id"])].failureReason);
   }
 });
 
-FILTER.addEventListener("input", (event) => {
+refs.filter.addEventListener("input", (event) => {
   if (event.target.nodeName === "SELECT" || event.target.nodeName === "INPUT") {
-    requestTasks();
+    requestTasks(0);
   }
 });
 
-NEXT_PAGE_BTN.addEventListener("click", getNextPage);
+refs.nextPage.addEventListener("click", getNextPage);
+refs.firstPage.addEventListener("click", getFirstPage);
+refs.previousPage.addEventListener("click", getPreviousPage);
+refs.lastPage.addEventListener("click", getLastPage);
 
-function updateData() {
-  updateFields(tableData);
-  updateTypes(types);
+function updateData(data) {
+  DATA.splice(0, DISPLAY_LIMIT);
+  data.tasks.forEach((val) => DATA.push(val));
+
+  refs.generalProcessedCounter.textContent = data.generalInfo.processed;
+  refs.generalFailedCounter.textContent = data.generalInfo.failed;
+  refs.generalTotalCounter.textContent = data.generalInfo.total;
+  totalPages = Math.ceil(Number(data.statistics.total) / DISPLAY_LIMIT);
+  refs.numberOfPages.textContent = totalPages;
+  refs.processedCounter.textContent = data.statistics.processed;
+  refs.failedCounter.textContent = data.statistics.failed;
+  refs.pageNumber.textContent = pageNumber + 1;
+
+  updateMarkup(DATA);
+  updateTypes([...data.generalInfo.types]);
+  saveSettings();
+}
+
+function saveSettings() {
+  const settings = {
+    currentPage: pageNumber,
+    currentType: refs.currentType.value,
+    statusFlag: refs.statusFlag.checked,
+    sortOrder: refs.sortOrder.value,
+    period: refs.period.value,
+  };
+  localStorage.setItem("settings", JSON.stringify(settings));
+}
+
+function extractSettings() {
+  let settings = localStorage.getItem("settings");
+  if (settings) {
+    settings = JSON.parse(settings);
+    // pageNumber = settings.currentPage;
+    // refs.pageNumber.textContent = pageNumber + 1;
+    refs.currentType.value = settings.currentType;
+    refs.statusFlag.checked = settings.statusFlag;
+    refs.sortOrder.value = settings.sortOrder;
+    refs.period.value = settings.period;
+  }
 }
 
 function updateTypes(types) {
   for (const type of types) {
-    if (![...TYPE_SELECT.options].find((elem) => elem.value === type)) {
-      const html = `
-        <option value="${type}">${type}</option>
-      `;
-      TYPE_SELECT.insertAdjacentHTML("beforeend", html);
+    if (![...refs.currentType.options].find((elem) => elem.value === type)) {
+      const html = `<option value="${type}">${type}</option>`;
+      refs.currentType.insertAdjacentHTML("beforeend", html);
     }
   }
 }
 
-function updateFields(tasks) {
-  const getHtmlField = (task, index) => {
+function updateMarkup(tasks) {
+  const markup = tasks.reduce((accum, task, index) => {
     let failureReason =
       task.status === "Failed" ? task.failureReason.slice(0, 30) : "";
     if (failureReason.length === 30) {
       failureReason += "...";
     }
-    return `
+    const fieldNumber = pageNumber * DISPLAY_LIMIT + index + 1;
+    return (
+      accum +
+      `
     <tr class="table__row js-table-row">
       <td class="table__cell">
-        <p class="table__data">${index + 1}</p>
+        <p class="table__data">${fieldNumber}</p>
       </td>
       <td class="table__cell table__cell--interactive">
         <p class="table__data js-data-cell" data-id="${index}">${task.id}</p>
@@ -95,43 +136,56 @@ function updateFields(tasks) {
         <p class="table__data table__long-cell js-reason-cell" data-id="${index}">${failureReason}</p>
       </td>
     </tr>
-  `;
-  };
-
-  TABLE_BODY.innerHTML = "";
-
-  for (const i in tasks) {
-    TABLE_BODY.insertAdjacentHTML(
-      "beforeend",
-      getHtmlField(tasks[i], Number(i))
+  `
     );
+  }, "");
+
+  refs.tableBody.innerHTML = markup;
+}
+
+// Navigation
+
+function getFirstPage(event) {
+  requestTasks(0);
+}
+
+function getPreviousPage(event) {
+  if (pageNumber > 0) {
+    requestTasks(pageNumber - 1);
   }
 }
 
-function getFirstPage() {
-  fieldIndex = 0;
-  PAGE_NUMBER.textContent = 1;
-  requestTasks();
-}
-
-function getPreviousPage() {
-  if (fieldIndex < TABLE_DISPLAY_LIMIT) {
-    return;
-  } else {
-    fieldIndex -= TABLE_DISPLAY_LIMIT;
-    PAGE_NUMBER.textContent = Number(PAGE_NUMBER.textContent) - 1;
-    requestTasks();
+function getNextPage(event) {
+  if (pageNumber < totalPages - 1) {
+    requestTasks(pageNumber + 1);
   }
 }
 
-function getNextPage() {
-  if (TABLE_BODY.childElementCount < TABLE_DISPLAY_LIMIT) {
-    return;
-  } else {
-    fieldIndex += TABLE_DISPLAY_LIMIT;
-    PAGE_NUMBER.textContent = Number(PAGE_NUMBER.textContent) + 1;
-    requestTasks();
-  }
+function getLastPage(event) {
+  requestTasks(totalPages - 1);
 }
 
-function getLastPage() {}
+// Requests
+
+function requestTasks(nextPage) {
+  _requestTasks({
+    limit: DISPLAY_LIMIT,
+    page: nextPage,
+    type: refs.currentType.value,
+    period: refs.period.value,
+    order: refs.sortOrder.value,
+    status: Number(refs.statusFlag.checked),
+  })
+    .then((data) => {
+      if (data.tasks.length) {
+        pageNumber = nextPage;
+      } else {
+        pageNumber = 0;
+      }
+      updateData(data);
+    })
+    .catch((error) => {
+      // errorHandler(error);
+      console.log(error);
+    });
+}

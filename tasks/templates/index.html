@@ -45,16 +45,16 @@
                 </label>
                 <label class="switch">
                   <span class="filter__span"></span>
-                  <input class="js-only-failed-checkbox" type="checkbox" />
+                  <input class="js-status-flag" type="checkbox" />
                   <span class="slider"></span>
                 </label>
               </li>
               <li class="filter__item">
-                <label class="filter__label" for="datetime-sort-select-1">
+                <label class="filter__label">
                   <span class="filter__span">Sorted by</span>
                 </label>
                 <select
-                  class="filter__select js-datetime-sort-select"
+                  class="filter__select js-sort-order"
                   id="datetime-sort-select-1"
                 >
                   <option class="filter__select-option" value="1">
@@ -71,11 +71,11 @@
                 </svg>
               </li>
               <li class="filter__item">
-                <label class="filter__label" for="type-select-1">
+                <label class="filter__label">
                   <span class="filter__span">Type</span>
                 </label>
                 <select
-                  class="filter__select js-type-select"
+                  class="filter__select js-type"
                   name="show-tasks-by-type"
                   id="type-select-1"
                 >
@@ -88,11 +88,11 @@
                 </svg>
               </li>
               <li class="filter__item">
-                <label class="filter__label" for="period-select-1">
+                <label class="filter__label">
                   <span class="filter__span">Period</span>
                 </label>
                 <select
-                  class="filter__select js-period-select"
+                  class="filter__select js-period"
                   name="show-tasks-for-period"
                   id="period-select-1"
                 >
@@ -114,7 +114,7 @@
                 </label>
                 <div class="table-navigation__items">
                   <button
-                    class="table-navigation__button js-first-page-btn"
+                    class="table-navigation__button js-first-page"
                     type="button"
                   >
                     <svg class="icon" width="25" height="25">
@@ -122,7 +122,7 @@
                     </svg>
                   </button>
                   <button
-                    class="table-navigation__button js-previous-page-btn"
+                    class="table-navigation__button js-previous-page"
                     type="button"
                   >
                     <svg class="icon" width="25" height="25">
@@ -133,6 +133,7 @@
                   </button>
                   <span
                     class="table-navigation__span table-navigation__span--left js-page-number"
+                    data-page-number="0"
                     >0</span
                   >
                   <span
@@ -140,11 +141,11 @@
                     >of</span
                   >
                   <span
-                    class="table-navigation__span table-navigation__span--right js-pages"
-                    >0</span
+                    class="table-navigation__span table-navigation__span--right js-number-of-pages"
+                    >1</span
                   >
                   <button
-                    class="table-navigation__button js-next-page-btn"
+                    class="table-navigation__button js-next-page"
                     type="button"
                   >
                     <svg class="icon" width="25" height="25">
@@ -154,7 +155,7 @@
                     </svg>
                   </button>
                   <button
-                    class="table-navigation__button js-last-page-btn"
+                    class="table-navigation__button js-last-page"
                     type="button"
                   >
                     <svg class="icon" width="25" height="25">
@@ -221,9 +222,7 @@
       </div>
     </div>
 
-    <script src="./js/main.js"></script>
+    <script src="./js/main.js" type="module"></script>
     <script src="./js/modal.js"></script>
-    <script src="./js/utils.js"></script>
-    <script src="./js/server-api.js"></script>
   </body>
 </html>

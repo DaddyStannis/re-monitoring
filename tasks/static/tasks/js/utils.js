@@ -4,7 +4,7 @@ function addLeadingZero(num) {
   return num < 10 ? "0" + num : num;
 }
 
-function formatDatetime(timestamp) {
+export function formatDatetime(timestamp) {
   const datetime = new Date(Number(timestamp) * 1000);
   const Y = datetime.getFullYear();
   const M = addLeadingZero(datetime.getMonth() + 1);

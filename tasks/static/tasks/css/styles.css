@@ -80,6 +80,8 @@ a {
 .info {
   display: flex;
   gap: 10px;
+  font-size: 16px;
+  line-height: 1.16;
 }
 
 .info::after {
@@ -127,7 +129,7 @@ a {
   appearance: none;
   outline: none;
   cursor: pointer;
-  height: 40px;
+  height: 42px;
   padding: 10px 38px 10px 18px;
   font-size: 18px;
   font-weight: 500;
@@ -136,6 +138,11 @@ a {
   border: none;
   border-radius: 5px;
   transition: background-color 250ms, background-color 250ms;
+}
+
+.filter__select:focus+.filter__icon {
+  transform-origin: left;
+  transform: translate(100%, 100%) rotate(180deg);
 }
 
 .filter__select option {
@@ -171,7 +178,7 @@ a {
   position: relative;
   display: inline-block;
   width: 70px;
-  height: 40px;
+  height: 42px;
 }
 
 .switch input {
@@ -188,7 +195,7 @@ a {
   right: 0;
   bottom: 0;
   background-color: #ccc;
-  border-radius: 5px;
+  border-radius: 25px;
   -webkit-transition: .4s;
   transition: .4s;
 }
@@ -196,12 +203,12 @@ a {
 .slider:before {
   position: absolute;
   content: "";
-  height: 32px;
+  height: 34px;
   width: 33px;
   left: 4px;
   bottom: 4px;
   background-color: white;
-  border-radius: 5px;
+  border-radius: 50px;
   -webkit-transition: .4s;
   transition: .4s;
 }
@@ -246,7 +253,7 @@ input:checked+.slider:before {
 
 .table-navigation__span {
   min-width: 30px;
-  height: 40px;
+  height: 42px;
   text-align: center;
   padding-top: 10px;
   padding-bottom: 10px;

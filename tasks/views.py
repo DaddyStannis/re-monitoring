@@ -17,15 +17,16 @@ def getIndex(request):
 
 def getTasks(request):
   limit = int(request.GET.get('limit', -1))
-  index = int(request.GET.get('index', 0))
+  page = int(request.GET.get('page', 0))
   type_ = request.GET.get('type', 'alltypes')
   period = request.GET.get('period', 'alltime')
-  newerFirst = int(request.GET.get('newer-first', 1))
-  onlyFailed = int(request.GET.get('only-failed', 0))
+  newerFirst = int(request.GET.get('order', 1))
+  onlyFailed = int(request.GET.get('status', 0))
+  
   
   tasks, stat = TASK_SCANNER.getList(
-    index, 
-    index + limit, 
+    page * limit, 
+    page * limit + limit, 
     type_=type_, 
     newerFirst=newerFirst, 
     onlyFailed=onlyFailed, 

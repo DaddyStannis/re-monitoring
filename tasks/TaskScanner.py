@@ -86,9 +86,10 @@ class TaskScanner:
                 self._generalInfo['types'].append(task['type'])
         return task
     
-    def removeTask(self, path):        
+    def removeTask(self, path):
+        relativePath = Path.removePrefix(path, self._requestDir)     
         with self._lock:
-            self._removeTaskNotSafe(path)
+            self._removeTaskNotSafe(relativePath)
                     
     def _removeTaskNotSafe(self, path):
         for task in self._tasks:
